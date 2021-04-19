@@ -1,0 +1,37 @@
+    
+    
+    Receive:
+            Incoming frames will have one sperate ID for each actuator
+            
+            8 bytes of data per incoming frame
+            
+            data bytes will be in integers and needs to be converted:
+                position    ->  12 bit uint - 1 (4094) which needs to be converted to a decimal number (double) mapped between 0.0 - 90.0 [mm]
+                velocity    ->  16 bit uint - 1 (65534) which needs to be converted to a decimal/integer number mapped to be between (-60) - (+60) [mm/s]
+            
+
+            frame interface:
+                    frame.id = individual id per actuator (0x0 - 0x5)
+                    frame.length = 8
+                    
+                    frame.data[0] = setpoint position               // input = 0            =       setpoint = 0        [m]
+                    frame.data[1] = setpoint position               // input = 2047.5       =       setpoint = 0.045    [m]
+                                                                    // input = 4095         =       setpoint = 0.090    [m]
+ 
+                    
+                    frame.data[2] = feedforward velocity            // input = 0            =       velocity = -0.06    [m/s]
+                    frame.data[3] = feedforward veloctiy            // input = 32767.5      =       velocity = 0        [m/s]
+                                                                    // input = 65535        =       velocity = 0.06     [m/s]
+                    
+                    frame.data[4] = timestamp
+                    frame.data[5] = timestamp
+                    frame.data[6] = message serial number
+                    frame.data[7] = message serial number
+
+
+
+    Send:
+
+            - State msg,    id = C0,    length = 1
+            - Error msg,    id = E0,    length = 1
+            - Feedback,     id = F0,    length = 8
